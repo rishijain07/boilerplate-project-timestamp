@@ -20,27 +20,26 @@ app.get("/", function (req, res) {
 
 
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
+app.get("/api/hello", function (req, res) {https://boilerplate-project-timestamp.beingrishijain.repl.co
   res.json({greeting: 'hello API'});
 });
+app.get("/api", (req, res) => {
 
-app.get("/api/timestamp/:date",(req,res)=>{
-  let inp = req.params.date;
-  let date; 
-  if ((/\d{4}-\d{2}-\d{2}/).test(inp)) { // if ####-##-##
-    date = new Date(inp);
-  } else if ((/^\d+$/).test(inp)) {  // if #######
-    date = new Date(+inp);  // convert string to number
-  } else {
-    date = new Error("Invalid format")
-    res.json({error : date})
+  res.json({ unix: Date.now(), utc: Date() });
+
+});
+
+app.get("/api/:timestamp", function (req, res) {
+  let timestamp = req.params.timestamp;
+  if(timestamp.match(/\d{5,}/)){
+    timestamp = +timestamp;
   }
-   res.json({
-    unix: date.getTime(),
-    utc: date.toUTCString()
-  })
-})
-
+  let date = new Date(timestamp);
+  if(date.toUTCString() == "Invalid Date"){
+    res.json({error: date.toUTCString()})
+  }
+  res.json({ unix:date.valueOf(), utc:date.toUTCString() });
+});
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
